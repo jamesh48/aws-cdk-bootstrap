@@ -2,13 +2,24 @@ import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
-import { ECSTaskExecutionRole } from './components/ecsTaskExecutionRole';
-import { ECSTaskDefinitionRole } from './components/ecsTaskDefinitionRole';
-import { Vpc } from './components/vpc';
-import { ECSCluster } from './components/ecsCluster';
+
+import {
+  ECSTaskDefinitionRole,
+  ECSTaskExecutionRole,
+  ECSCluster,
+  ALB,
+  Vpc,
+} from './components';
+
+interface AwsBootstrapCdkStackProps extends cdk.StackProps {
+  aws_env: {
+    AWS_ACM_FSH_CERTIFICATE_ARN: string;
+    AWS_VPC_ID: string;
+  };
+}
 
 export class AwsBootstrapCdkStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: AwsBootstrapCdkStackProps) {
     super(scope, id, props);
 
     const generatedVpc = new Vpc(this, 'jh-e1-vpc', {
@@ -44,6 +55,13 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
     new ECSCluster(this, 'jh-ecs-cluster', {
       clusterName: 'jh-e1-ecs-cluster',
       vpc: generatedVpc,
+    });
+
+    new ALB(this, 'jh-alb', {
+      loadBalancerName: 'jh-alb',
+      vpc: generatedVpc,
+      internetFacing: true,
+      aws_env: props.aws_env,
     });
   }
 }
