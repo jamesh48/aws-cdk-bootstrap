@@ -5,6 +5,7 @@ import { Construct } from 'constructs';
 interface JHALBProps extends elbv2.ApplicationLoadBalancerProps {
   aws_env: {
     AWS_ACM_FSH_CERTIFICATE_ARN: string;
+    AWS_ACM_SRG_CERTIFICATE_ARN: string;
   };
 }
 
@@ -21,10 +22,17 @@ export class ALB extends elbv2.ApplicationLoadBalancer {
 
     this.addListener('jh-https-listener', {
       certificates: [
+        // FSH
         acm.Certificate.fromCertificateArn(
           this,
           'fsh-imported-certificate',
           props.aws_env.AWS_ACM_FSH_CERTIFICATE_ARN
+        ),
+        // SRG
+        acm.Certificate.fromCertificateArn(
+          this,
+          'srg-imported-certificate',
+          props.aws_env.AWS_ACM_SRG_CERTIFICATE_ARN
         ),
       ],
       port: 443,
