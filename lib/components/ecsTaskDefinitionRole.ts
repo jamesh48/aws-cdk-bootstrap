@@ -8,7 +8,13 @@ export class ECSTaskDefinitionRole extends iam.Role {
     this.addToPolicy(
       new iam.PolicyStatement({
         sid: 'dynamodbpermissions',
-        actions: ['dynamodb:GetItem', 'dynamodb:PutItem'],
+        actions: [
+          'dynamodb:GetItem',
+          'dynamodb:PutItem',
+          'dynamodb:BatchWriteItem',
+          'dynamodb:Query',
+          'dynamodb:DeleteItem',
+        ],
         effect: iam.Effect.ALLOW,
         resources: ['*'],
       })
