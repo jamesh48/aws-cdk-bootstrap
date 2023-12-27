@@ -11,6 +11,7 @@ export class ECSTaskDefinitionRole extends iam.Role {
         actions: [
           'dynamodb:GetItem',
           'dynamodb:PutItem',
+          'dynamodb:UpdateItem',
           'dynamodb:BatchWriteItem',
           'dynamodb:Query',
           'dynamodb:DeleteItem',
