@@ -1,21 +1,21 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
-export class ECSTaskDefinitionRole extends iam.Role {
+export class LambdaExecutionRole extends iam.Role {
   constructor(scope: Construct, id: string, props: iam.RoleProps) {
     super(scope, id, props);
 
     this.addToPolicy(
       new iam.PolicyStatement({
-        sid: 'dynamodbpermissions',
         actions: [
-          'dynamodb:GetItem',
-          'dynamodb:PutItem',
-          'dynamodb:UpdateItem',
-          'dynamodb:BatchWriteItem',
-          'dynamodb:Query',
-          'dynamodb:DeleteItem',
+          'ec2:DescribeInstances',
+          'ec2:CreateNetworkInterface',
+          'ec2:AttachNetworkInterface',
+          'ec2:DescribeNetworkInterfaces',
+          'autoscaling:CompleteLifecycleAction',
+          'ec2:DeleteNetworkInterface',
         ],
+        sid: 'vpclambda',
         effect: iam.Effect.ALLOW,
         resources: ['*'],
       })
@@ -23,7 +23,14 @@ export class ECSTaskDefinitionRole extends iam.Role {
 
     this.addToPolicy(
       new iam.PolicyStatement({
-        sid: 'lambdapermissions',
+        actions: ['dynamodb:GetItem'],
+        effect: iam.Effect.ALLOW,
+        resources: ['*'],
+      })
+    );
+
+    this.addToPolicy(
+      new iam.PolicyStatement({
         actions: ['lambda:InvokeFunction'],
         effect: iam.Effect.ALLOW,
         resources: ['*'],
@@ -33,6 +40,7 @@ export class ECSTaskDefinitionRole extends iam.Role {
     this.addToPolicy(
       new iam.PolicyStatement({
         actions: [
+          'logs:CreateLogGroup',
           'logs:CreateLogStream',
           'logs:DescribeLogGroups',
           'logs:DescribeLogStreams',

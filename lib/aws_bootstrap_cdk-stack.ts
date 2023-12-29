@@ -4,10 +4,11 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 import {
+  ALB,
   ECSTaskDefinitionRole,
   ECSTaskExecutionRole,
   ECSCluster,
-  ALB,
+  LambdaExecutionRole,
   Vpc,
 } from './components';
 
@@ -38,7 +39,7 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
         // {
         //   cidrMask: 24,
         //   name: 'Private',
-        //   subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        //   subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         // },
       ],
     });
@@ -53,6 +54,11 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
     });
 
+    new LambdaExecutionRole(this, 'jh-ecs-lambda-role', {
+      roleName: 'jh-lambda-execution-role',
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+    });
+
     new ECSCluster(this, 'jh-ecs-cluster', {
       clusterName: 'jh-e1-ecs-cluster',
       vpc: generatedVpc,
@@ -63,6 +69,7 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
       vpc: generatedVpc,
       internetFacing: true,
       aws_env: props.aws_env,
+      idleTimeout: cdk.Duration.seconds(120),
     });
   }
 }
