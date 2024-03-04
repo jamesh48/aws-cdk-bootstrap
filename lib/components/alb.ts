@@ -6,6 +6,7 @@ interface JHALBProps extends elbv2.ApplicationLoadBalancerProps {
   aws_env: {
     AWS_ACM_FSH_CERTIFICATE_ARN: string;
     AWS_ACM_SRG_CERTIFICATE_ARN: string;
+    AWS_ACM_LMK_CERTIFICATE_ARN: string;
   };
 }
 
@@ -33,6 +34,12 @@ export class ALB extends elbv2.ApplicationLoadBalancer {
           this,
           'srg-imported-certificate',
           props.aws_env.AWS_ACM_SRG_CERTIFICATE_ARN
+        ),
+        // LMK
+        acm.Certificate.fromCertificateArn(
+          this,
+          'lmk-imported-certificate',
+          props.aws_env.AWS_ACM_LMK_CERTIFICATE_ARN
         ),
       ],
       port: 443,
