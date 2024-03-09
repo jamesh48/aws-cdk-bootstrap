@@ -14,9 +14,10 @@ import {
 
 interface AwsBootstrapCdkStackProps extends cdk.StackProps {
   aws_env: {
+    AWS_ACM_BCP_CERTIFICATE_ARN: string;
     AWS_ACM_FSH_CERTIFICATE_ARN: string;
-    AWS_ACM_SRG_CERTIFICATE_ARN: string;
     AWS_ACM_LMK_CERTIFICATE_ARN: string;
+    AWS_ACM_SRG_CERTIFICATE_ARN: string;
     AWS_VPC_ID: string;
   };
 }
