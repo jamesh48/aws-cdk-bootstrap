@@ -15,6 +15,7 @@ export class ECSTaskDefinitionRole extends iam.Role {
           'dynamodb:BatchWriteItem',
           'dynamodb:Query',
           'dynamodb:DeleteItem',
+          'dynamodb:Scan',
         ],
         effect: iam.Effect.ALLOW,
         resources: ['*'],

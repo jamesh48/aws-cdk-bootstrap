@@ -10,6 +10,7 @@ import { AwsBootstrapCdkStack } from '../lib/aws_bootstrap_cdk-stack';
 const app = new cdk.App();
 const {
   AWS_ACM_BCP_CERTIFICATE_ARN,
+  AWS_ACM_CDB_CERTIFICATE_ARN,
   AWS_ACM_FSH_CERTIFICATE_ARN,
   AWS_ACM_LMK_CERTIFICATE_ARN,
   AWS_ACM_SRG_CERTIFICATE_ARN,
@@ -18,6 +19,10 @@ const {
 
 if (!AWS_ACM_BCP_CERTIFICATE_ARN) {
   throw new Error('AWS_ACM_BCP_CERTIFICATE_ARN env is undefined!');
+}
+
+if (!AWS_ACM_CDB_CERTIFICATE_ARN) {
+  throw new Error('AWS_ACM_CDB_CERTIFICATE_ARN env is undefined');
 }
 
 if (!AWS_ACM_FSH_CERTIFICATE_ARN) {
@@ -43,6 +48,7 @@ new AwsBootstrapCdkStack(app, 'AwsBootstrapCdkStack', {
   },
   aws_env: {
     AWS_ACM_BCP_CERTIFICATE_ARN,
+    AWS_ACM_CDB_CERTIFICATE_ARN,
     AWS_ACM_FSH_CERTIFICATE_ARN,
     AWS_ACM_LMK_CERTIFICATE_ARN,
     AWS_ACM_SRG_CERTIFICATE_ARN,
