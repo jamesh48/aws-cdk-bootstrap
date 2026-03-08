@@ -12,16 +12,7 @@ import {
   Vpc,
 } from './components';
 
-interface AwsBootstrapCdkStackProps extends cdk.StackProps {
-  aws_env: {
-    AWS_ACM_BCP_CERTIFICATE_ARN: string;
-    AWS_ACM_CDB_CERTIFICATE_ARN: string;
-    AWS_ACM_FSH_CERTIFICATE_ARN: string;
-    AWS_ACM_LMK_CERTIFICATE_ARN: string;
-    AWS_ACM_SRG_CERTIFICATE_ARN: string;
-    AWS_VPC_ID: string;
-  };
-}
+interface AwsBootstrapCdkStackProps extends cdk.StackProps {}
 
 export class AwsBootstrapCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AwsBootstrapCdkStackProps) {
@@ -43,7 +34,7 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
         //   cidrMask: 24,
         //   name: 'Private',
         //   subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
-        // },
+        // }, 
       ],
     });
 
@@ -71,7 +62,6 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
       loadBalancerName: 'jh-alb',
       vpc: generatedVpc,
       internetFacing: true,
-      aws_env: props.aws_env,
       idleTimeout: cdk.Duration.seconds(120),
     });
   }

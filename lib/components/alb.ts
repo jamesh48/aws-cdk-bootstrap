@@ -1,16 +1,9 @@
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import { Construct } from 'constructs';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 
-interface JHALBProps extends elbv2.ApplicationLoadBalancerProps {
-  aws_env: {
-    AWS_ACM_BCP_CERTIFICATE_ARN: string;
-    AWS_ACM_CDB_CERTIFICATE_ARN: string;
-    AWS_ACM_FSH_CERTIFICATE_ARN: string;
-    AWS_ACM_LMK_CERTIFICATE_ARN: string;
-    AWS_ACM_SRG_CERTIFICATE_ARN: string;
-  };
-}
+interface JHALBProps extends elbv2.ApplicationLoadBalancerProps {}
 
 export class ALB extends elbv2.ApplicationLoadBalancer {
   constructor(scope: Construct, id: string, props: JHALBProps) {
@@ -23,38 +16,52 @@ export class ALB extends elbv2.ApplicationLoadBalancer {
       targetProtocol: elbv2.ApplicationProtocol.HTTPS,
     });
 
+    const hostedZoneJobCoach = route53.HostedZone.fromLookup(
+      this,
+      'HostedZoneJobCoach',
+      {
+        domainName: 'lmkn.net',
+      },
+    );
+
+    const hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
+      domainName: 'cassanova.net',
+    });
+
+    const hostedZoneSRG = route53.HostedZone.fromLookup(
+      this,
+      'HostedZone-SRG',
+      {
+        domainName: 'stravareportgenerator.com',
+      },
+    );
+
+    const cassanovaCert = new acm.Certificate(this, 'Certificate', {
+      domainName: 'cassanova.net',
+      subjectAlternativeNames: ['*.cassanova.net'],
+      validation: acm.CertificateValidation.fromDns(hostedZone),
+    });
+
+    const srgCert = new acm.Certificate(this, 'Certificate-SRG', {
+      domainName: 'stravareportgenerator.com',
+      subjectAlternativeNames: ['*.stravareportgenerator.com'],
+      validation: acm.CertificateValidation.fromDns(hostedZoneSRG),
+    });
+
+    const jobCoachCert = new acm.Certificate(this, 'Certificate-JobCoach', {
+      domainName: 'lmkn.net',
+      subjectAlternativeNames: ['*.lmkn.net'],
+      validation: acm.CertificateValidation.fromDns(hostedZoneJobCoach),
+    });
+
     this.addListener('jh-https-listener', {
       certificates: [
-        // FSH
-        acm.Certificate.fromCertificateArn(
-          this,
-          'fsh-imported-certificate',
-          props.aws_env.AWS_ACM_FSH_CERTIFICATE_ARN
-        ),
-        // SRG
-        acm.Certificate.fromCertificateArn(
-          this,
-          'srg-imported-certificate',
-          props.aws_env.AWS_ACM_SRG_CERTIFICATE_ARN
-        ),
-        // LMK
-        acm.Certificate.fromCertificateArn(
-          this,
-          'lmk-imported-certificate',
-          props.aws_env.AWS_ACM_LMK_CERTIFICATE_ARN
-        ),
-        // BCP
-        acm.Certificate.fromCertificateArn(
-          this,
-          'bcp-imported-certificate',
-          props.aws_env.AWS_ACM_BCP_CERTIFICATE_ARN
-        ),
-        // Camden Bot
-        acm.Certificate.fromCertificateArn(
-          this,
-          'cdb-imported-certificate',
-          props.aws_env.AWS_ACM_CDB_CERTIFICATE_ARN
-        ),
+        // Cassanova
+        cassanovaCert,
+        // Strava Report Generator
+        srgCert,
+        // Job Coach
+        jobCoachCert,
       ],
       port: 443,
       defaultAction: elbv2.ListenerAction.fixedResponse(200, {
