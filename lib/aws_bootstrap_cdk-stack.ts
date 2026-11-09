@@ -69,11 +69,16 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
       vpc: generatedVpc,
     });
 
-    new ALB(this, 'jh-alb', {
+    const alb = new ALB(this, 'jh-alb', {
       loadBalancerName: 'jh-alb',
       vpc: generatedVpc,
       internetFacing: true,
       idleTimeout: cdk.Duration.seconds(120),
+    });
+
+    new cdk.CfnOutput(this, 'HttpsListenerArn', {
+      value: alb.httpsListener.listenerArn,
+      exportName: 'jh-alb-https-listener-arn',
     });
   }
 }
