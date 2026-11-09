@@ -1,0 +1,61 @@
+name: Deploy CDK Stack
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: CDK action to run
+        type: choice
+        options:
+          - diff
+          - deploy
+          - destroy
+        default: diff
+      confirm_destroy:
+        description: Type the stack name (AwsBootstrapCdkStack) to confirm destroy
+        type: string
+        required: false
+
+permissions:
+  id-token: write # required for AWS OIDC
+  contents: read
+
+concurrency:
+  group: cdk-deploy
+  cancel-in-progress: false
+
+jobs:
+  cdk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check destroy confirmation
+        if: inputs.action == 'destroy' && inputs.confirm_destroy != 'AwsBootstrapCdkStack'
+        run: |
+          echo "::error::Destroy not confirmed. Enter 'AwsBootstrapCdkStack' in confirm_destroy."
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: CDK diff
+        if: inputs.action != 'destroy'
+        run: npm run diff
+
+      - name: CDK deploy
+        if: inputs.action == 'deploy'
+        run: npm run deploy -- --require-approval never
+
+      - name: CDK destroy
+        if: inputs.action == 'destroy'
+        run: npm run destroy -- --force

@@ -40,5 +40,13 @@
   "hosted-zone:account=471507967541:domainName=stravareportgenerator.com:region=us-east-1": {
     "Id": "/hostedzone/Z0294193K7S7CPEAF5OY",
     "Name": "stravareportgenerator.com."
+  },
+  "hosted-zone:account=471507967541:domainName=lmkn.net:region=us-east-1": {
+    "Id": "/hostedzone/Z0699608FXEIKOJZY78U",
+    "Name": "lmkn.net."
+  },
+  "hosted-zone:account=471507967541:domainName=fshjobcoach.com:region=us-east-1": {
+    "Id": "/hostedzone/Z057843923JIFZBRP6PDY",
+    "Name": "fshjobcoach.com."
   }
 }

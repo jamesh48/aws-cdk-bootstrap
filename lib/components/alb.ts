@@ -20,7 +20,7 @@ export class ALB extends elbv2.ApplicationLoadBalancer {
       this,
       'HostedZoneJobCoach',
       {
-        domainName: 'lmkn.net',
+        domainName: 'fshjobcoach.com',
       },
     );
 
@@ -49,8 +49,8 @@ export class ALB extends elbv2.ApplicationLoadBalancer {
     });
 
     const jobCoachCert = new acm.Certificate(this, 'Certificate-JobCoach', {
-      domainName: 'lmkn.net',
-      subjectAlternativeNames: ['*.lmkn.net'],
+      domainName: 'fshjobcoach.com',
+      subjectAlternativeNames: ['*.fshjobcoach.com'],
       validation: acm.CertificateValidation.fromDns(hostedZoneJobCoach),
     });
 

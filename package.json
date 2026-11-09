@@ -1,6 +1,9 @@
 {
   "name": "aws_bootstrap_cdk",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=24.11.1"
+  },
   "bin": {
     "aws_bootstrap_cdk": "bin/aws_bootstrap_cdk.js"
   },
@@ -8,7 +11,13 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "diff": "cdk diff AwsBootstrapCdkStack",
+    "deploy": "cdk deploy AwsBootstrapCdkStack",
+    "destroy": "cdk destroy AwsBootstrapCdkStack",
+    "diff:oidc": "cdk diff GithubOidcStack",
+    "deploy:oidc": "cdk deploy GithubOidcStack",
+    "destroy:oidc": "cdk destroy GithubOidcStack"
   },
   "devDependencies": {
     "@types/jest": "^29.5.1",
