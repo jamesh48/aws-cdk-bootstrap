@@ -9,6 +9,8 @@ CDK (TypeScript) app for shared AWS infrastructure in `us-east-1`.
 | `AwsBootstrapCdkStack` | VPC, ECS cluster, ALB (with Route 53 / ACM certificates), and shared IAM roles for ECS tasks and Lambda |
 | `GithubOidcStack` | GitHub Actions OIDC provider and the `github-actions-cdk-deploy` role the deploy workflow assumes |
 
+Repos allowed to assume the deploy role are listed in `repos` in `bin/aws_bootstrap_cdk.ts`; run `npm run deploy:oidc` after changing it.
+
 `GithubOidcStack` is kept separate so destroying `AwsBootstrapCdkStack` from GitHub Actions doesn't delete the role the workflow runs as.
 
 ## Commands

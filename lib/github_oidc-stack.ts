@@ -3,7 +3,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 interface GithubOidcStackProps extends cdk.StackProps {
-  repo: string;
+  repos: string[];
 }
 
 // Kept separate from AwsBootstrapCdkStack so destroying that stack from
@@ -24,7 +24,7 @@ export class GithubOidcStack extends cdk.Stack {
           'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
         },
         StringLike: {
-          'token.actions.githubusercontent.com:sub': `repo:${props.repo}:*`,
+          'token.actions.githubusercontent.com:sub': props.repos.map((repo) => `repo:${repo}:*`),
         },
       }),
     });

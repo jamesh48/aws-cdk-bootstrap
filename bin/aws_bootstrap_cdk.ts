@@ -19,5 +19,9 @@ new AwsBootstrapCdkStack(app, 'AwsBootstrapCdkStack', { env });
 
 new GithubOidcStack(app, 'GithubOidcStack', {
   env,
-  repo: 'jamesh48/aws-cdk-bootstrap',
+  repos: [
+    'jamesh48/aws-cdk-bootstrap',
+    'jamesh48/PostgresEc2Stack-CDK',
+    'jamesh48/fsh-ai-job-coach',
+  ],
 });
