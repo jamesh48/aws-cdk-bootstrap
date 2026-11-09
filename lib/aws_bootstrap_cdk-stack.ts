@@ -19,6 +19,7 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
     super(scope, id, props);
 
     const generatedVpc = new Vpc(this, 'jh-e1-vpc', {
+      vpcName: 'jh-e1-vpc',
       maxAzs: 2,
       enableDnsHostnames: true,
       enableDnsSupport: true,
@@ -38,7 +39,17 @@ export class AwsBootstrapCdkStack extends cdk.Stack {
       ],
     });
 
-    new ECSTaskExecutionRole(this, 'jh-ecs-task-execution-role', {
+    new cdk.CfnOutput(this, 'VpcId', {
+      value: generatedVpc.vpcId,
+      exportName: 'jh-e1-vpc-id',
+    });
+
+    new cdk.CfnOutput(this, 'PublicSubnetIds', {
+      value: generatedVpc.publicSubnets.map((s) => s.subnetId).join(','),
+      exportName: 'jh-e1-vpc-public-subnet-ids',
+    });
+
+    new ECSTaskExecutionRole(this,'jh-ecs-task-execution-role', {
       roleName: 'jh-ecs-task-execution-role',
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
     });
